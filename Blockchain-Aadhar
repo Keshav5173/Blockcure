@@ -1,0 +1,84 @@
+// SPDX-License-Identifier: Unlicensed
+pragma solidity ^0.8.21;
+pragma experimental ABIEncoderV2;
+
+contract Aadhar {
+    struct Organization {
+        OrganizationType orgType;
+        string name;
+        bool isVerified;
+    }
+
+    enum OrganizationType { Government, Private }
+
+    struct Person {
+        string name;
+        string AadharNo;
+        address ethAddress;
+        bytes encryptedData; // Store encrypted data
+    }
+
+    mapping(address => Person) public addressPersonMap;
+    mapping(address => Organization) public addressOrgMap;
+    mapping(bytes32 => address) public personPasskeyToAddress;
+
+    event OrganizationRegistered(address indexed orgAddress, string name, uint orgType);
+    event OrganizationVerified(address indexed orgAddress);
+    event PersonRegistered(address indexed personAddress, string name, string AadharNo);
+
+    address public admin;
+
+    modifier onlyAdmin() {
+        require(msg.sender == admin, "Only admin can perform this action");
+        _;
+    }
+
+    constructor() {
+        admin = msg.sender;
+    }
+
+    function registerOrg(address orgAddress, string memory name, OrganizationType orgType) public onlyAdmin {
+        Organization memory org = Organization(orgType, name, false);
+        addressOrgMap[orgAddress] = org;
+        emit OrganizationRegistered(orgAddress, name, uint(orgType));
+    }
+
+    function verifyOrganization(address orgAddress) public onlyAdmin {
+        require(addressOrgMap[orgAddress].orgType == OrganizationType.Government, "Organization not registered");
+        addressOrgMap[orgAddress].isVerified = true;
+        emit OrganizationVerified(orgAddress);
+    }
+
+    function registerPerson(string memory name, string memory AadharNo, string memory passkey) public {
+        require(bytes(addressPersonMap[msg.sender].AadharNo).length == 0, "Person already registered");
+        require(bytes(AadharNo).length == 16, "Aadhar number length must be 16");
+        
+        Person memory per = Person(name, AadharNo, msg.sender, encrypt(AadharNo, name, passkey));
+        addressPersonMap[msg.sender] = per;
+        personPasskeyToAddress[keccak256(abi.encodePacked(AadharNo, name, passkey))] = msg.sender;
+        emit PersonRegistered(msg.sender, name, AadharNo);
+    }
+
+    function getPerson(string memory passkey) public view returns (bytes memory) {
+        require(personPasskeyToAddress[keccak256(abi.encodePacked(addressPersonMap[msg.sender].AadharNo, addressPersonMap[msg.sender].name, passkey))] == msg.sender, "Incorrect password");
+        return decrypt(addressPersonMap[msg.sender].AadharNo, addressPersonMap[msg.sender].name, passkey);
+    }
+
+    function encrypt(string memory AadharNo, string memory name, string memory passkey) private pure returns (bytes memory) {
+        // Implement encryption logic
+        // This function should be replaced with actual encryption algorithm
+        // For demonstration purpose, let's return a dummy encrypted data
+        return abi.encodePacked(AadharNo, name, passkey);
+    }
+
+    function decrypt(string memory AadharNo, string memory name, string memory passkey) private pure returns (bytes memory) {
+        // Implement decryption logic
+        // This function should be replaced with actual decryption algorithm
+        // For demonstration purpose, let's return a dummy decrypted data
+        return abi.encodePacked(AadharNo, name, passkey);
+    }
+
+    function getOrg(address orgAddress) public view returns (Organization memory) {
+        return addressOrgMap[orgAddress];
+    }
+}
