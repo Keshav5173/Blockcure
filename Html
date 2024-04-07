@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>User Registration</h1>
+        <div class="options">
+            <button onclick="showForm('organization')">Register Organization</button>
+            <button onclick="showForm('person')">Register Person</button>
+        </div>
+        <div id="organizationForm" class="form" style="display: none;">
+            <h2>Register Organization</h2>
+            <input type="text" id="orgHash" placeholder="Organization Hash">
+            <button onclick="registerOrganization()">Register</button>
+        </div>
+        <div id="personForm" class="form" style="display: none;">
+            <h2>Register Person</h2>
+            <input type="text" id="name" placeholder="Name">
+            <input type="text" id="personHash" placeholder="Person Hash Address">
+            <input type="text" id="passkey" placeholder="Passkey">
+            <input type="text" id="aadhar" placeholder="Aadhar Number">
+            <button onclick="registerPerson()">Register</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
