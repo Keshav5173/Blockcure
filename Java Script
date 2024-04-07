@@ -1,0 +1,24 @@
+function showForm(formType) {
+    if (formType === 'organization') {
+        document.getElementById("organizationForm").style.display = "block";
+        document.getElementById("personForm").style.display = "none";
+    } else if (formType === 'person') {
+        document.getElementById("personForm").style.display = "block";
+        document.getElementById("organizationForm").style.display = "none";
+    }
+}
+
+function registerOrganization() {
+    var orgHash = document.getElementById("orgHash").value;
+    // Simulate backend functionality (replace with actual AJAX request)
+    console.log("Organization registered with hash:", orgHash);
+}
+
+function registerPerson() {
+    var name = document.getElementById("name").value;
+    var personHash = document.getElementById("personHash").value;
+    var passkey = document.getElementById("passkey").value;
+    var aadhar = document.getElementById("aadhar").value;
+    // Simulate backend functionality (replace with actual AJAX request)
+    console.log("Person registered with name:", name);
+}
